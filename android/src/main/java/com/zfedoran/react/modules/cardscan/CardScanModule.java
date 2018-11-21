@@ -44,14 +44,16 @@ public class CardScanModule extends ReactContextBaseJavaModule implements Activi
 
         // customize these values to suit your needs.
         scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true); // default: false
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, true); // default: false
         scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false); // default: false
         scanIntent.putExtra(CardIOActivity.EXTRA_RESTRICT_POSTAL_CODE_TO_NUMERIC_ONLY, false); // default: false
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CARDHOLDER_NAME, false); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CARDHOLDER_NAME, true); // default: false
         scanIntent.putExtra(CardIOActivity.EXTRA_USE_CARDIO_LOGO, false);
         scanIntent.putExtra(CardIOActivity.EXTRA_HIDE_CARDIO_LOGO, true);
         scanIntent.putExtra(CardIOActivity.EXTRA_USE_PAYPAL_ACTIONBAR_ICON, false);
-        scanIntent.putExtra(CardIOActivity.EXTRA_GUIDE_COLOR, Color.GRAY);
+        scanIntent.putExtra(CardIOActivity.EXTRA_GUIDE_COLOR, Color.WHITE);
+        scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_INSTRUCTIONS, true);
+        scanIntent.putExtra(CardIOActivity.EXTRA_SCAN_EXPIRY, true);
 
         // hides the manual entry button
         // if set, developers should provide their own manual entry mechanism in the app
@@ -77,11 +79,12 @@ public class CardScanModule extends ReactContextBaseJavaModule implements Activi
             map.putString ("redactedCardNumber"         , scanResult.getRedactedCardNumber());
             map.putBoolean("isExpiryValid"              , scanResult.isExpiryValid());
             map.putString ("cardholderName"             , scanResult.cardholderName);
-            map.putString ("cardNumber"                 , scanResult.cardholderName);
+            map.putString ("cardNumber"                 , scanResult.cardNumber);
             map.putInt    ("expiryMonth"                , scanResult.expiryMonth);
             map.putInt    ("expiryYear"                 , scanResult.expiryYear);
             map.putString ("postalCode"                 , scanResult.postalCode);
             map.putInt    ("cvvLength"                  , cardType.cvvLength());
+            map.putString ("cvv"                        , scanResult.cvv);
             map.putString ("cardType"                   , cardType.getDisplayName("en"));
 
             this.mPromise.resolve(map);
