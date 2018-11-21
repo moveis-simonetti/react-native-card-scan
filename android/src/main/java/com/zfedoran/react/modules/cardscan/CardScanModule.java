@@ -7,6 +7,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ActivityEventListener;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,14 +17,13 @@ import io.card.payment.CardIOActivity;
 import io.card.payment.CreditCard;
 import io.card.payment.CardType;
 
-public class CardScanModule extends ReactContextBaseJavaModule {
+public class CardScanModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     int MY_SCAN_REQUEST_CODE = 42;
-    Activity mActivity       = null;
     Promise mPromise         = null;
 
-    public CardScanModule(ReactApplicationContext reactContext, Activity activity) {
+    public CardScanModule(ReactApplicationContext reactContext) {
         super(reactContext);
-        this.mActivity = activity;
+        reactContext.addActivityEventListener(this);
     }
 
     @Override
@@ -31,11 +31,16 @@ public class CardScanModule extends ReactContextBaseJavaModule {
         return "CardScan";
     }
 
+    public void onNewIntent(Intent intent) { }
+
     @ReactMethod
     public void scanCard(Promise promise) {
         this.mPromise = promise;
 
         Intent scanIntent = new Intent(this.mActivity, CardIOActivity.class);
+
+        Activity currentActivity = getCurrentActivity();
+        Intent scanIntent = new Intent(currentActivity, CardIOActivity.class);
 
         // customize these values to suit your needs.
         scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true); // default: false
@@ -56,10 +61,10 @@ public class CardScanModule extends ReactContextBaseJavaModule {
         scanIntent.putExtra(CardIOActivity.EXTRA_KEEP_APPLICATION_THEME, false); // default: false
 
         // MY_SCAN_REQUEST_CODE is arbitrary and is only used within this activity.
-        this.mActivity.startActivityForResult(scanIntent, MY_SCAN_REQUEST_CODE);
+        currentActivity.startActivityForResult(scanIntent, MY_SCAN_REQUEST_CODE);
     }
 
-    public void handleActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         String resultStr;
         if (data != null && data.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT)) {
             CreditCard scanResult = data.getParcelableExtra(CardIOActivity.EXTRA_SCAN_RESULT);
