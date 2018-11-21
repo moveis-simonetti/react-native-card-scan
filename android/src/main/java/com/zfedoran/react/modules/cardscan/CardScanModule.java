@@ -36,9 +36,6 @@ public class CardScanModule extends ReactContextBaseJavaModule implements Activi
     @ReactMethod
     public void scanCard(Promise promise) {
         this.mPromise = promise;
-
-        Intent scanIntent = new Intent(this.mActivity, CardIOActivity.class);
-
         Activity currentActivity = getCurrentActivity();
         Intent scanIntent = new Intent(currentActivity, CardIOActivity.class);
 
